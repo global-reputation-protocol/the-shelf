@@ -29,9 +29,9 @@ NFT 2.0 reputational avatars for governance and other utilities
 
 #### Inspirations
 - Scouting medals
-![](https://hackmd.io/_uploads/SkIJwvcn3.png)
+- ![](https://hackmd.io/_uploads/SkIJwvcn3.png)
 - Kusama's Proof of Chaos
-![](https://hackmd.io/_uploads/HyCFpwc22.jpg)
+- ![](https://hackmd.io/_uploads/HyCFpwc22.jpg)
 
 ## References
 - https://hackmd.io/@tmZI-bUXSeuiJsiJr_9Z8w/rykgS691h

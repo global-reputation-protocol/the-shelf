@@ -8,9 +8,6 @@ import "@rmrk-team/evm-contracts/contracts/implementations/lazyMintNative/InitDa
 import "./TheCatalog.sol";
 import "./TheItem.sol";
 
-
-import "hardhat/console.sol";
-
 /**
  * @title EquipabbleToken
  * @author RMRK team
@@ -76,16 +73,14 @@ contract TheShelf is
     ) external {
         require(assetToItem[itemAddress] == 0, 'Item already added');
 
-        addPart(metadataURI);
+        addPart(itemAddress, metadataURI);
 
-        console.log('adding item 1', itemAddress, TheItem(itemAddress).totalAssets());
         TheItem(itemAddress).addEquippableAssetEntry(
             1, // uint64 equippableGroupId,
             catalogAddress, // address catalogAddress,
             metadataURI, // string memory metadataURI,
             slots // uint64[] calldata partIds = array equals to len of the shelf
         );
-        console.log('adding item 2', itemAddress, TheItem(itemAddress).totalAssets());
 
         assetToItem[itemAddress] = TheItem(itemAddress).totalAssets();
         TheItem(itemAddress).setValidParentForEquippableGroup(
@@ -97,8 +92,6 @@ contract TheShelf is
 
     function mintItem(address itemAddress) external {
       // Mint TheItem
-      console.log('minting item', msg.sender, ownerToShelfId[msg.sender]);
-
       TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
 
       acceptChild(1, 0, itemAddress, 1); // Accept Item on TheShelf
@@ -112,11 +105,12 @@ contract TheShelf is
     }
 
     function addPart(
+        address itemAddress,
         string memory metadataURI
     ) public {
         totalParts++;
         address[] memory parts = new address[](1); // Initialize with a specific length of 1
-        parts[0] = address(this); // Assign the current contract's address
+        parts[0] = itemAddress; // Assign the current contract's address
         TheCatalog(catalogAddress).addPart(IRMRKCatalog.IntakeStruct(totalParts, IRMRKCatalog.Part(
                                 IRMRKCatalog.ItemType.Slot,  // ItemType itemType; //1 byte 
                                 10, // uint8 zindex 
@@ -151,8 +145,6 @@ contract TheShelf is
         }
 
         ownerToShelfId[msg.sender] = nextToken;
-        console.log('minted', msg.sender, nextToken);
-
         return nextToken;
     }
 

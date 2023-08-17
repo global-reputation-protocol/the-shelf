@@ -188,19 +188,13 @@ describe("Equippable Token", function () {
 
       await shelf.addItemCollection(
         item.target, // address itemAddress,
-        [1], // uint64 equippableGroupId,
+        [1], // uint64 slot,
         "item.png", // address catalogAddress,
       );
 
-      console.log('step A')
-
       await shelf.mint(owner.address, 1); // Mint TheShelf
 
-      console.log('step A1')
-
       await shelf.mintItem(item.target);
-
-      console.log('step B')
 
       await shelf.equip([
         1, // soldiersIds[0], 
@@ -209,9 +203,6 @@ describe("Equippable Token", function () {
         1, // slot
         1 // childAssetId
         ]);
-
-        console.log('step C')
-
     });
   });
 });

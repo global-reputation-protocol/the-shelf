@@ -71,9 +71,12 @@ describe("Equippable Token", function () {
 
     const catalogSymbol = 'CATALOG';
     const catalogType = 'items';
-    // const catalog = await ethers.deployContract("RMRKCatalogImpl", [catalogSymbol, catalogType]);
+    const catalog = await ethers.deployContract("TheCatalog", [catalogSymbol, catalogType]);
 
-    const catalog = {}
+    await shelf.waitForDeployment();
+    await item.waitForDeployment();
+    await catalog.waitForDeployment();
+
     // setup catalog addPartList
 
     return { catalog, shelf, item, owner, otherAccount };
@@ -93,36 +96,63 @@ describe("Equippable Token", function () {
       expect(await shelf.pricePerMint()).to.equal(0)
     });
 
-    // it("Mint NFT", async function () {
-    //   const { equipabbleToken, owner } = await loadFixture(deployOneYearLockFixture);
-    //   await equipabbleToken.mint(owner.address, 1); // Mint TheShelf
-    //   // Deploy TheItem 
-    //   // Link Item to TheShelf
+    it("Mint NFT", async function () {
+      const { catalog, shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
 
-    //   // nestMint  // Mint Item
+      // Mint TheShelf
+      await shelf.mint(owner.address, 1); // Mint TheShelf
 
-    //   // acceptChild // Accept Item on TheShelf
-    //   // parentId (uint256)
-    //   // childIndex (uint256) - how many children ppl have
-    //   // childAddress (address)
-    //   // childId (uint256) 
+      const partDescription = {
+        itemType: 1,
+        z: 0,
+        equippable: [item.target],
+        metadataURI: 'item.png',
+      };
+  
+      await catalog.addPartList([
+        { partId: 1, part: partDescription },
+      ]);
 
-    //   // addEquippableAssetEntry // Add possible item to TheShelf
+      // Global shelf config
+      await shelf.addEquippableAssetEntry(
+        0, // uint64 equippableGroupId,
+        catalog.target, // address catalogAddress,
+        'sample', // string memory metadataURI,
+        [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
+      )
 
-    //   await equipabbleToken.addEquippableAssetEntry(
-    //     0, // uint64 id,  = assetId
-    //     0, // uint64 equippableGroupId,
-    //     catalog.address, // address catalogAddress,
-    //     '', // string memory metadataURI,
-    //     [] // uint64[] calldata partIds = array equals to len of the shelf
-    //   )
+      // Global Item config
+      await item.addEquippableAssetEntry(
+        1, // uint64 equippableGroupId,
+        catalog.target, // address catalogAddress,
+        'sample', // string memory metadataURI,
+        [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
+      )
 
-    //   // addAssetToToken  // Gives TheItem to TheShelf
-    //   await neonEquip.addAssetToToken(
-    //     // uint256 tokenId,
-    //     // uint64 assetId,
-    //     0 // uint64 replacesAssetWithId = 0
-    //   );
+      await item.setValidParentForEquippableGroup(
+        1, // equippableGroupId,
+        shelf.target, // soldierEquip.address,
+        1, // partIdForWeapon,
+      );
+
+      console.log(await item.totalAssets())
+      
+      // Mint TheItem
+      await item.nestMint(shelf.target, 1, 1); // Mint TheItem
+
+      // Accept Child
+      // parentId (uint256)
+      // childIndex (uint256) - how many children ppl have
+      // childAddress (address)
+      // childId (uint256) 
+      await shelf.acceptChild(1, 0, item.target, 1); // Accept Item on TheShelf
+    
+      // Gives Visual Asset to Token
+      await item.addAssetToToken(
+        1, // uint256 tokenId,
+        await item.totalAssets(), // uint64 assetId,
+        0 // uint64 replacesAssetWithId = 0
+      );
 
     //   const expectedSlots = [bn(partIdForWeapon), bn(partIdForBackground)];
     //   expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
@@ -134,39 +164,22 @@ describe("Equippable Token", function () {
     //   ['', ''],
     // ]);
 
-    // await expect(
-    //   soldierEquip
-    //     .connect(from)
-    //     .equip([soldiersIds[0], childIndex, soldierResId, partIdForWeapon, weaponResId]),
-    // )
-    //   .to.emit(soldierEquip, 'ChildAssetEquipped')
-    //   .withArgs(
-    //     soldiersIds[0],
-    //     soldierResId,
-    //     partIdForWeapon,
-    //     weaponsIds[0],
-    //     weaponEquip.address,
-    //     weaponAssetsEquip[0],
-    //   );
-    // // All part slots are included on the response:
-    // // If a slot has nothing equipped, it returns an empty equip:
-    // const expectedEquips = [
-    //   [bn(soldierResId), bn(weaponResId), weaponsIds[0], weaponEquip.address],
-    //   [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-    // ];
-    // const expectedMetadata = ['ipfs:weapon/equip/5', ''];
-    // expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
-    //   expectedSlots,
-    //   expectedEquips,
-    //   expectedMetadata,
-    // ]);
+    await shelf.equip([
+      1, // soldiersIds[0], 
+      0, // childIndex,
+      1, // assetId
+      1, // slot
+      1 // childAssetId
+      ])
 
     // // Child is marked as equipped:
-    // expect(
-    //   await soldierEquip.isChildEquipped(soldiersIds[0], weapon.address, weaponsIds[0]),
-    // ).to.eql(true);
-      
-
-    // });
+    expect(
+      await shelf.isChildEquipped(
+        1, // soldiersIds[0], 
+        item.target, //weapon.address,
+        1, // weaponsIds[0]
+        )
+    ).to.eql(true);
+    });
   });
 });

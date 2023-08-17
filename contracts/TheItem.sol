@@ -62,7 +62,7 @@ contract TheItem is
         address to,
         uint256 numToMint,
         uint256 destinationId
-    ) public payable virtual returns (uint256) {
+    ) public payable virtual onlyOwner returns (uint256) {
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(
             numToMint
         );

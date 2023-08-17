@@ -150,18 +150,15 @@ contract TheShelf is
      * @param numToMint Number of tokens to mint
      * @return The ID of the first token to be minted in the current minting cycle
      */
-    function mint(
-        address to,
-        uint256 numToMint
-    ) public payable virtual returns (uint256) {
+    function mint() public payable virtual returns (uint256) {
         require(ownerToShelfId[msg.sender] == 0, 'Already minted');
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(
-            numToMint
+            1
         );
-        _chargeMints(numToMint);
+        _chargeMints(1);
 
         for (uint256 i = nextToken; i < totalSupplyOffset; ) {
-            _safeMint(to, i, "");
+            _safeMint(msg.sender, i, "");
             unchecked {
                 ++i;
             }

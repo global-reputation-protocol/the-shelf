@@ -7,12 +7,12 @@
 const hre = require("hardhat");
 
 async function main() {
-  const name = "Equipabble NFT - tstrrr";
+  const name = "TheShelf - tstrrr";
   const symbol = "tstrrr";
   const collectionMetadata = "";
   const baseTokenURI = "";
   const data = [
-    "0xf0e1dca77b2a40113f3091b7ef6c30feb6405b3f", // address royaltyRecipient; // 20 bytes
+    "0x93375aD6296b35621175D1ae0e1D6444ba46AcE7", // address royaltyRecipient; // 20 bytes
     0, // uint16 royaltyPercentageBps; // 2 bytes
     10000000000, // uint256 maxSupply;
     0, // uint256 pricePerMint;
@@ -21,7 +21,7 @@ async function main() {
   const args = [name, symbol, collectionMetadata, baseTokenURI, data]
 
   // const equipabbleToken = await EquipabbleToken.deploy(name, symbol, collectionMetadata, baseTokenURI, data);
-  const parentToken = await ethers.deployContract("EquipabbleToken", args);
+  const parentToken = await ethers.deployContract("TheShelf", args);
 
   await parentToken.waitForDeployment();
 

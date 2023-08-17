@@ -192,7 +192,7 @@ describe("Equippable Token", function () {
         "item.png", // address catalogAddress,
       );
 
-      await shelf.mint(owner.address, 1); // Mint TheShelf
+      await shelf.mint(); // Mint TheShelf
 
       await shelf.mintItem(item.target);
 

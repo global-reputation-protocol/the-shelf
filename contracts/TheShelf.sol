@@ -24,6 +24,8 @@ contract TheShelf is
     uint256 private _pricePerMint;
     address catalogAddress;
     uint64 private totalParts;
+    mapping(address => uint256) public assetToItem;
+    mapping(address => uint256) public ownerToShelfId;
 
     /**
      * @notice Used to initialize the smart contract.
@@ -55,11 +57,12 @@ contract TheShelf is
         catalogAddress = address(catalog);
     }
 
-    function addItem(
+    function addItemCollection(
         address itemAddress,
         uint64[] calldata slots, // always make it lenght 1
         string memory metadataURI
     ) external {
+        require(assetToItem[itemAddress] != 0, 'Item already added');
         addPart(metadataURI);
         TheItem(itemAddress).addEquippableAssetEntry(
             1, // uint64 equippableGroupId,
@@ -67,10 +70,26 @@ contract TheShelf is
             metadataURI, // string memory metadataURI,
             slots // uint64[] calldata partIds = array equals to len of the shelf
         );
+
+        assetToItem[itemAddress] = TheItem(itemAddress).totalAssets();
         TheItem(itemAddress).setValidParentForEquippableGroup(
             1, // equippableGroupId,
             address(this), // soldierEquip.address,
             slots[0] // partId,
+        );
+    }
+
+    function mintItem(address itemAddress) external {
+      // Mint TheItem
+      TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
+
+      acceptChild(1, 0, itemAddress, 1); // Accept Item on TheShelf
+    
+        // Gives Visual Asset to Token
+      TheItem(itemAddress).addAssetToToken(
+            ownerToShelfId[msg.sender], // uint256 tokenId,
+            uint64(assetToItem[itemAddress]), // uint64 assetId,
+            0 // uint64 replacesAssetWithId = 0
         );
     }
 
@@ -100,6 +119,7 @@ contract TheShelf is
         address to,
         uint256 numToMint
     ) public payable virtual returns (uint256) {
+        require(ownerToShelfId[msg.sender] == 0, 'Already minted');
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(
             numToMint
         );
@@ -111,6 +131,8 @@ contract TheShelf is
                 ++i;
             }
         }
+
+        ownerToShelfId[msg.sender] = nextToken;
 
         return nextToken;
     }

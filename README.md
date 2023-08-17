@@ -35,3 +35,15 @@ NFT 2.0 reputational avatars for governance and other utilities
 
 ## References
 - https://hackmd.io/@tmZI-bUXSeuiJsiJr_9Z8w/rykgS691h
+
+## Deployed Contracts
+
+1. TheShelf: https://polygonscan.com/address/0xDF210f05c4d82979b6AEcBC8f10BA88A9eD91539
+2. AAVE-SNAPSHOT-0: https://polygonscan.com/address/0xc9cC612a8871fd9b5af7F4bA37B56E63aa5c877c
+3. AAVE-SNAPSHOT-1: https://polygonscan.com/address/0xE393A667F9a04AE45d62Fe16B98C334c3Fc5A20C
+4. AAVE-SNAPSHOT-2: https://polygonscan.com/address/0x7fc014683647B20AE593005b2ab7044677fDA072
+5. AAVE-SNAPSHOT-3: https://polygonscan.com/address/0x212A1F0B1577725528F67f63D79A33A184cf3B40
+6. AAVE-SNAPSHOT-4: https://polygonscan.com/address/0xB48163d179e0F3c2530D0B8D827BB6b55bAe44e3
+7. LENS-FOLLOWS-0x01: https://polygonscan.com/address/0x91a934CD6ac5d06de9Cf49e7d9F1E8E4E1B2F244
+8. LENS-FOLLOWS-0x02: https://polygonscan.com/address/0x4606A66AB0B397c9497a9951e22dcd91Db303b0E
+9. LENS-FOLLOWS-0x03: https://polygonscan.com/address/0x7817c123321E205C69396168A07dA93560fd2C1b

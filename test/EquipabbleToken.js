@@ -186,7 +186,7 @@ describe("Equippable Token", function () {
     // });
 
     it("Quick", async function () {
-      const { shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
+      const { shelf, item } = await loadFixture(deployOneYearLockFixture);
 
       await shelf.addItemCollection(
         item.target, // address itemAddress,

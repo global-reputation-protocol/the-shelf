@@ -67,13 +67,14 @@ describe("Equippable Token", function () {
     // const equipabbleToken = await EquipabbleToken.deploy(name, symbol, collectionMetadata, baseTokenURI, data);
     const shelf =  await ethers.deployContract("TheShelf", getShelfArgs(owner.address));
 
+    await shelf.waitForDeployment();
+
     const item =  await ethers.deployContract("TheItem", getItemArgs(shelf.target));
 
     const catalogSymbol = 'CATALOG';
     const catalogType = 'items';
     const catalog = await ethers.deployContract("TheCatalog", [catalogSymbol, catalogType]);
 
-    await shelf.waitForDeployment();
     await item.waitForDeployment();
     await catalog.waitForDeployment();
 
@@ -183,20 +184,19 @@ describe("Equippable Token", function () {
     // });
 
     it("Quick", async function () {
-      const { catalog, shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
+      const { shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
 
-      console.log('step 0')
-
-      await shelf.addEquippableAssetEntry(
-            0, // uint64 equippableGroupId,
-            catalog.target, // address catalogAddress,
-            'sample', // string memory metadataURI,
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] // uint64[] calldata partIds = array equals to len of the shelf
-          )
+      await shelf.addItemCollection(
+        item.target, // address itemAddress,
+        [1], // uint64 equippableGroupId,
+        "item.png", // address catalogAddress,
+      );
 
       console.log('step A')
 
       await shelf.mint(owner.address, 1); // Mint TheShelf
+
+      console.log('step A1')
 
       await shelf.mintItem(item.target);
 

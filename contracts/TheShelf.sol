@@ -77,12 +77,15 @@ contract TheShelf is
         require(assetToItem[itemAddress] == 0, 'Item already added');
 
         addPart(metadataURI);
+
+        console.log('adding item 1', itemAddress, TheItem(itemAddress).totalAssets());
         TheItem(itemAddress).addEquippableAssetEntry(
             1, // uint64 equippableGroupId,
             catalogAddress, // address catalogAddress,
             metadataURI, // string memory metadataURI,
             slots // uint64[] calldata partIds = array equals to len of the shelf
         );
+        console.log('adding item 2', itemAddress, TheItem(itemAddress).totalAssets());
 
         assetToItem[itemAddress] = TheItem(itemAddress).totalAssets();
         TheItem(itemAddress).setValidParentForEquippableGroup(

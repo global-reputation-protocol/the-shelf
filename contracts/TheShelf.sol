@@ -6,6 +6,8 @@ import "@rmrk-team/evm-contracts/contracts/implementations/abstract/RMRKAbstract
 import "@rmrk-team/evm-contracts/contracts/implementations/utils/RMRKTokenURIEnumerated.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/lazyMintNative/InitDataNativePay.sol";
 import "./TheCatalog.sol";
+import "./TheItem.sol";
+
 
 // import "hardhat/console.sol";
 
@@ -51,6 +53,25 @@ contract TheShelf is
         _pricePerMint = data.pricePerMint;
         TheCatalog catalog = new TheCatalog('CATALOG', 'items');
         catalogAddress = address(catalog);
+    }
+
+    function addItem(
+        address itemAddress,
+        uint64[] calldata slots, // always make it lenght 1
+        string memory metadataURI
+    ) external {
+        addPart(metadataURI);
+        TheItem(itemAddress).addEquippableAssetEntry(
+            1, // uint64 equippableGroupId,
+            catalogAddress, // address catalogAddress,
+            metadataURI, // string memory metadataURI,
+            slots // uint64[] calldata partIds = array equals to len of the shelf
+        );
+        TheItem(itemAddress).setValidParentForEquippableGroup(
+            1, // equippableGroupId,
+            address(this), // soldierEquip.address,
+            slots[0] // partId,
+        );
     }
 
     function addPart(

@@ -1,5 +1,5 @@
 # THE SHELF - Global Reputation Protocol
-NFT 2.0 reputational avatars for governance and other utilities
+- NFT 2.0 reputational avatars for governance and other utilities
 
 ## Problem Statement
 - PFPs lack utility and the novelty worn off
@@ -11,7 +11,7 @@ NFT 2.0 reputational avatars for governance and other utilities
 - Reputation is measured based on items
 
 ## Technologies
-- NFT 2.0
+- NFT 2.0 (RMRK)
 - Lens
 - Polygon
 
@@ -27,14 +27,23 @@ NFT 2.0 reputational avatars for governance and other utilities
 - Voting participation
 - Content creation (proliferatooor) – Lens
 
-#### Inspirations
+## Image references
 - Scouting medals
 - ![](https://hackmd.io/_uploads/SkIJwvcn3.png)
-- Kusama's Proof of Chaos
+- Governance Reward Shelf
 - ![](https://hackmd.io/_uploads/HyCFpwc22.jpg)
+- Increased turnout on Kusama
+- ![](https://hackmd.io/_uploads/Hy9dBd5hn.png)
 
 ## References
 - https://hackmd.io/@tmZI-bUXSeuiJsiJr_9Z8w/rykgS691h
+- https://www.rmrk.app/
+- https://evm.rmrk.app/general-overview/rmrk-ercs
+- https://eips.ethereum.org/EIPS/eip-6220
+- https://github.com/rmrk-team/evm/blob/master/contracts/RMRK/equippable/RMRKEquippable.sol
+- https://medium.com/@0xwavingood/rmrk-vs-erc-6551-fbeeda664883
+- https://wizard.rmrk.dev/#
+- https://evm.rmrk.app/rmrk-usage-examples/rmrk-solidity/mergedequippable#user-journey
 
 ## Deployed Contracts
 

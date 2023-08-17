@@ -11,7 +11,7 @@ const aaveProposals = ['0x3d3cae04cca35a36b278449831a985ba8520ef127784f2724360d8
 const lensIds = ['0x01', '0x02', '0x03']
 
 
-async function main(){
+async function buildOuput(){
   let globalCounter = 1;
   let output = [];
 
@@ -31,6 +31,43 @@ async function main(){
   }
 
   return output;
+}
+
+async function deploy(output){
+  const allowList = await ethers.deployContract("TheAllowList", [output.allowList]);
+  await allowList.waitForDeployment();
+
+  const args = [output.name, output.symbol, output.collectionMetadata, output.baseTokenURI, output.data, allowList.target]
+
+  const parentToken = await ethers.deployContract("TheItem", args);
+
+  await parentToken.waitForDeployment();
+
+  const contractAddress = parentToken.target;
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  console.log('Sleeping for 5 seconds...');
+  await sleep(60000);
+  console.log('Awake after 5 seconds!');
+
+  await hre.run("verify:verify", {
+    address: contractAddress,
+    constructorArguments: args,
+  });
+
+  console.log(`ETH and unlock timestamp deployed to ${parentToken.target}`);
+  console.log('ready')
+  output.address = parentToken.target;
+  console.log(output);
+  console.log('xis')
+}
+
+async function main(){
+  const output = await buildOuput();
+  await deploy(output[0]);
 }
 
 main().catch((error) => {

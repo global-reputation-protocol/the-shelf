@@ -43,9 +43,10 @@ async function generateLensAllowList(lensId){
 module.exports.generateLensItem = async function(lensId, lensNumber, globalId){
     return {
       id: globalId,
-      symbol: `LENS-FOLLOWS-${lensId}`,
-      collectionMetadata: `https://shelf-frontend-shelf.vercel.app/item-${globalId}.json`,
-      baseTokenURI: `https://shelf-frontend-shelf.vercel.app/item-${globalId}.json`,
+      name: `LENS-FOLLOWS-${lensId}`,
+      symbol: `ITEM`,
+      collectionMetadata: `https://shelf-frontend-shelf.vercel.app/api/item-${globalId}/`,
+      baseTokenURI: `https://shelf-frontend-shelf.vercel.app/api/item-${globalId}/`,
       data: [
         shelfAddress, // address royaltyRecipient; // 20 bytes
         0, // uint16 royaltyPercentageBps; // 2 bytes

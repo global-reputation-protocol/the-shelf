@@ -55,9 +55,10 @@ function generateAaveAllowList(proposalId){
 module.exports.generateAaveItem = async function(proposalId, aaveId, globalId){
     return {
       id: globalId,
-      symbol: `AAVE-SNAPSHOT-${aaveId}`,
-      collectionMetadata: `https://shelf-frontend-shelf.vercel.app/item-${globalId}.json`,
-      baseTokenURI: `https://shelf-frontend-shelf.vercel.app/item-${globalId}.json`,
+      name: `AAVE-SNAPSHOT-${aaveId}`,
+      symbol: `ITEM`,
+      collectionMetadata: `https://shelf-frontend-shelf.vercel.app/item-${globalId}/`,
+      baseTokenURI: `https://shelf-frontend-shelf.vercel.app/api/item-${globalId}/`,
       data: [
         shelfAddress, // address royaltyRecipient; // 20 bytes
         0, // uint16 royaltyPercentageBps; // 2 bytes

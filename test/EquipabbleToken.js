@@ -5,11 +5,7 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-// enum ItemType {
-//   None,
-//   Slot,
-//   Fixed,
-// }
+const MAX_UINT256 = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
 async function setupCatalog(){
 
@@ -26,6 +22,34 @@ async function setupCatalog(){
   ]);
 }
 
+function getShelfArgs(address){
+  const name = "TheShelf";
+    const symbol = "SHELF";
+    const collectionMetadata = "https://shelf-frontend-shelf.vercel.app/shelf-collection.json";
+    const baseTokenURI = "https://shelf-frontend-shelf.vercel.app/shelf.json";
+    const data = [
+      address, // address royaltyRecipient; // 20 bytes
+      0, // uint16 royaltyPercentageBps; // 2 bytes
+      MAX_UINT256, // uint256 maxSupply;
+      0, // uint256 pricePerMint;
+    ];
+    return [name, symbol, collectionMetadata, baseTokenURI, data];
+}
+
+function getItemArgs(shelfAddress, allowListAddress){
+  const name = "TheItem";
+    const symbol = "ITEM";
+    const collectionMetadata = "https://shelf-frontend-shelf.vercel.app/item-collection.json";
+    const baseTokenURI = "https://shelf-frontend-shelf.vercel.app/item.json";
+    const data = [
+      shelfAddress, // address royaltyRecipient; // 20 bytes
+      0, // uint16 royaltyPercentageBps; // 2 bytes
+      MAX_UINT256, // uint256 maxSupply;
+      0, // uint256 pricePerMint;
+    ];
+    return [name, symbol, collectionMetadata, baseTokenURI, data, allowListAddress];
+}
+
 describe("Equippable Token", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
@@ -34,28 +58,25 @@ describe("Equippable Token", function () {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const name = "Equipabble NFT - tstrrr";
-    const symbol = "tstrrr";
-    const collectionMetadata = "";
-    const baseTokenURI = "";
-    const data = [
-      "0xf0e1dca77b2a40113f3091b7ef6c30feb6405b3f", // address royaltyRecipient; // 20 bytes
-      0, // uint16 royaltyPercentageBps; // 2 bytes
-      1, // uint256 maxSupply;
-      0, // uint256 pricePerMint;
-    ]
     // const equipabbleToken = await EquipabbleToken.deploy(name, symbol, collectionMetadata, baseTokenURI, data);
-    const parentToken =  await ethers.deployContract("EquipabbleToken", [name, symbol, collectionMetadata, baseTokenURI, data]);
+    const shelf =  await ethers.deployContract("TheShelf", getShelfArgs(owner.address));
 
-    const itemToken =  await ethers.deployContract("EquipabbleToken", [name, symbol, collectionMetadata, baseTokenURI, data]);
+    await shelf.waitForDeployment();
 
-    const catalogSymbol = 'SSB';
-    const catalogType = 'mixed';
-    const catalog = await ethers.deployContract("RMRKCatalogImpl", [catalogSymbol, catalogType]);
+    const allowList = await ethers.deployContract("TheAllowList", [[owner.address]]);
+    await allowList.waitForDeployment();
+
+    const item =  await ethers.deployContract("TheItem", getItemArgs(shelf.target, allowList.target));
+    await item.waitForDeployment();
+
+    const catalogSymbol = 'CATALOG';
+    const catalogType = 'items';
+    const catalog = await ethers.deployContract("TheCatalog", [catalogSymbol, catalogType]);
+    await catalog.waitForDeployment();
 
     // setup catalog addPartList
 
-    return { catalog, parentToken, itemToken, owner, otherAccount };
+    return { catalog, shelf, item, owner, otherAccount, allowList };
   }
  
   // USER                   PROTOCOL
@@ -67,85 +88,113 @@ describe("Equippable Token", function () {
   // Equip TheItem
 
   describe("Deployment", function () {
-    it("Deploy Equippable", async function () {
-      const { equipabbleToken } = await loadFixture(deployOneYearLockFixture);
-      expect(await equipabbleToken.pricePerMint()).to.equal(0)
-    });
+    // it("Deploy Equippable", async function () {
+    //   const { shelf } = await loadFixture(deployOneYearLockFixture);
+    //   expect(await shelf.pricePerMint()).to.equal(0)
+    // });
 
-    it("Mint NFT", async function () {
-      const { equipabbleToken, owner } = await loadFixture(deployOneYearLockFixture);
-      await equipabbleToken.mint(owner.address, 1); // Mint TheShelf
-      // Deploy TheItem 
-      // Link Item to TheShelf
+    // it("Mint NFT", async function () {
+    //   const { catalog, shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
 
-      // nestMint  // Mint Item
+    //   // Mint TheShelf
+    //   await shelf.mint(owner.address, 1); // Mint TheShelf
 
-      // acceptChild // Accept Item on TheShelf
-      // parentId (uint256)
-      // childIndex (uint256) - how many children ppl have
-      // childAddress (address)
-      // childId (uint256) 
+    //   const partDescription = {
+    //     itemType: 1,
+    //     z: 0,
+    //     equippable: [item.target],
+    //     metadataURI: 'item.png',
+    //   };
+  
+    //   await catalog.addPartList([
+    //     { partId: 1, part: partDescription },
+    //   ]);
 
-      // addEquippableAssetEntry // Add possible item to TheShelf
+    //   // Global shelf config
+    //   await shelf.addEquippableAssetEntry(
+    //     0, // uint64 equippableGroupId,
+    //     catalog.target, // address catalogAddress,
+    //     'sample', // string memory metadataURI,
+    //     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] // uint64[] calldata partIds = array equals to len of the shelf
+    //   )
 
-      await equipabbleToken.addEquippableAssetEntry(
-        0, // uint64 id,  = assetId
-        0, // uint64 equippableGroupId,
-        catalog.address, // address catalogAddress,
-        '', // string memory metadataURI,
-        [] // uint64[] calldata partIds = array equals to len of the shelf
-      )
+    //   // Global Item config
+    //   await item.addEquippableAssetEntry(
+    //     1, // uint64 equippableGroupId,
+    //     catalog.target, // address catalogAddress,
+    //     'sample', // string memory metadataURI,
+    //     [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
+    //   )
 
-      // addAssetToToken  // Gives TheItem to TheShelf
-      await neonEquip.addAssetToToken(
-        // uint256 tokenId,
-        // uint64 assetId,
-        0 // uint64 replacesAssetWithId = 0
-      );
+    //   await item.setValidParentForEquippableGroup(
+    //     1, // equippableGroupId,
+    //     shelf.target, // soldierEquip.address,
+    //     1, // partIdForWeapon,
+    //   );
 
-      const expectedSlots = [bn(partIdForWeapon), bn(partIdForBackground)];
-      expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
-      expectedSlots,
-      [
-        [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-        [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-      ],
-      ['', ''],
-    ]);
-
-    await expect(
-      soldierEquip
-        .connect(from)
-        .equip([soldiersIds[0], childIndex, soldierResId, partIdForWeapon, weaponResId]),
-    )
-      .to.emit(soldierEquip, 'ChildAssetEquipped')
-      .withArgs(
-        soldiersIds[0],
-        soldierResId,
-        partIdForWeapon,
-        weaponsIds[0],
-        weaponEquip.address,
-        weaponAssetsEquip[0],
-      );
-    // All part slots are included on the response:
-    // If a slot has nothing equipped, it returns an empty equip:
-    const expectedEquips = [
-      [bn(soldierResId), bn(weaponResId), weaponsIds[0], weaponEquip.address],
-      [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-    ];
-    const expectedMetadata = ['ipfs:weapon/equip/5', ''];
-    expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
-      expectedSlots,
-      expectedEquips,
-      expectedMetadata,
-    ]);
-
-    // Child is marked as equipped:
-    expect(
-      await soldierEquip.isChildEquipped(soldiersIds[0], weapon.address, weaponsIds[0]),
-    ).to.eql(true);
+    //   console.log(await item.totalAssets())
       
+    //   // Mint TheItem
+    //   await item.nestMint(shelf.target, 1, 1); // Mint TheItem
 
+    //   // Accept Child
+    //   // parentId (uint256)
+    //   // childIndex (uint256) - how many children ppl have
+    //   // childAddress (address)
+    //   // childId (uint256) 
+    //   await shelf.acceptChild(1, 0, item.target, 1); // Accept Item on TheShelf
+    
+    //   // Gives Visual Asset to Token
+    //   await item.addAssetToToken(
+    //     1, // uint256 tokenId,
+    //     await item.totalAssets(), // uint64 assetId,
+    //     0 // uint64 replacesAssetWithId = 0
+    //   );
+
+    // //   const expectedSlots = [bn(partIdForWeapon), bn(partIdForBackground)];
+    // //   expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
+    // //   expectedSlots,
+    // //   [
+    // //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
+    // //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
+    // //   ],
+    // //   ['', ''],
+    // // ]);
+
+    // await shelf.equip([
+    //   1, // soldiersIds[0], 
+    //   0, // childIndex,
+    //   1, // assetId
+    //   1, // slot
+    //   1 // childAssetId
+    //   ])
+
+    // // // Child is marked as equipped:
+    // expect(
+    //   await shelf.isChildEquipped(
+    //     1, // soldiersIds[0], 
+    //     item.target, //weapon.address,
+    //     1, // weaponsIds[0]
+    //     )
+    // ).to.eql(true);
+    // });
+
+    it("Quick", async function () {
+      const { owner, shelf, item } = await loadFixture(deployOneYearLockFixture);
+
+      await shelf.addItemCollection(
+        item.target, // address itemAddress,
+        [1], // uint64 slot,
+        "https://shelf-frontend-shelf.vercel.app/item-on-shelf.png", // address catalogAddress,
+      );
+
+      await shelf.mint(); // Mint TheShelf
+
+      await shelf.mintItem(item.target);
+
+      await shelf.equipItem(item.target);
+
+      await shelf.unequipItem(item.target);
     });
   });
 });

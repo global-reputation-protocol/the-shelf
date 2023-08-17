@@ -7,21 +7,21 @@
 const hre = require("hardhat");
 
 async function main() {
-  const name = "Equipabble NFT - tstrrr";
-  const symbol = "tstrrr";
-  const collectionMetadata = "";
-  const baseTokenURI = "";
+  const name = "TheShelf";
+  const symbol = "SHELF";
+  const collectionMetadata = "https://shelf-frontend-shelf.vercel.app/shelf.json";
+  const baseTokenURI = "https://shelf-frontend-shelf.vercel.app/shelf.json";
   const data = [
-    "0xf0e1dca77b2a40113f3091b7ef6c30feb6405b3f", // address royaltyRecipient; // 20 bytes
+    "0x9B613116064F04796336221A01BA7B134C062567", // address royaltyRecipient; // 20 bytes
     0, // uint16 royaltyPercentageBps; // 2 bytes
     10000000000, // uint256 maxSupply;
     0, // uint256 pricePerMint;
-  ]
+  ];
 
   const args = [name, symbol, collectionMetadata, baseTokenURI, data]
 
   // const equipabbleToken = await EquipabbleToken.deploy(name, symbol, collectionMetadata, baseTokenURI, data);
-  const parentToken = await ethers.deployContract("EquipabbleToken", args);
+  const parentToken = await ethers.deployContract("TheShelf", args);
 
   await parentToken.waitForDeployment();
 

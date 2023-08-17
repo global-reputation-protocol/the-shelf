@@ -12,6 +12,11 @@
 
 ## Technologies
 - NFT 2.0 (RMRK)
+  - ERC-5773: Context-Dependent Multi-Asset Tokens
+  - ERC-6059: Parent-Governed Nestable Non-Fungible Tokens
+  - ERC-6220: Composable NFTs utilizing Equippable Parts
+  - ERC-6381: Public Non-Fungible Token Emote Repository
+  - ERC-6454: Minimal Transferable NFT detection interface (Soulbound)
 - Lens
 - Polygon
 

@@ -50,7 +50,7 @@ async function deploy(output){
   }
   
   console.log('Sleeping for 5 seconds...');
-  await sleep(60000);
+  await sleep(40000);
   console.log('Awake after 5 seconds!');
 
   await hre.run("verify:verify", {
@@ -62,7 +62,6 @@ async function deploy(output){
   console.log('ready')
   output.address = parentToken.target;
   console.log(output);
-  console.log('xis')
 }
 
 async function main(){

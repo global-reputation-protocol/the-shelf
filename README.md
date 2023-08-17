@@ -47,12 +47,12 @@
 
 ## Deployed Contracts
 
-1. TheShelf: https://polygonscan.com/address/0xDF210f05c4d82979b6AEcBC8f10BA88A9eD91539
-2. AAVE-SNAPSHOT-0: https://polygonscan.com/address/0xc9cC612a8871fd9b5af7F4bA37B56E63aa5c877c
-3. AAVE-SNAPSHOT-1: https://polygonscan.com/address/0xE393A667F9a04AE45d62Fe16B98C334c3Fc5A20C
-4. AAVE-SNAPSHOT-2: https://polygonscan.com/address/0x7fc014683647B20AE593005b2ab7044677fDA072
-5. AAVE-SNAPSHOT-3: https://polygonscan.com/address/0x212A1F0B1577725528F67f63D79A33A184cf3B40
-6. AAVE-SNAPSHOT-4: https://polygonscan.com/address/0xB48163d179e0F3c2530D0B8D827BB6b55bAe44e3
-7. LENS-FOLLOWS-0x01: https://polygonscan.com/address/0x91a934CD6ac5d06de9Cf49e7d9F1E8E4E1B2F244
-8. LENS-FOLLOWS-0x02: https://polygonscan.com/address/0x4606A66AB0B397c9497a9951e22dcd91Db303b0E
-9. LENS-FOLLOWS-0x03: https://polygonscan.com/address/0x7817c123321E205C69396168A07dA93560fd2C1b
+1. TheShelf: https://polygonscan.com/address/0x36B4f598528209CaCf7fdD63c0A16AaF9DB187ed
+2. AAVE-SNAPSHOT-0: https://polygonscan.com/address/0x5FE2DFBc079F02B3541Ad9191183df6ab3EF4001
+
+## Actions
+1. TheShelf mint: https://polygonscan.com/tx/0x863007cfb54cb432684ef81e5ac6fa4115b30cc613f2460148579c093e697b9e
+2. TheShelf add collection item: https://polygonscan.com/tx/0x0cc6b314510fe487a4c1b890c4d002472f8a935edbff6071335d48ef4c5dcf47
+3. TheShelf mint item: https://polygonscan.com/tx/0x77a33e819a754149600d8da14423da423ada311037c615dd982928b480f7c85d
+4. TheShelf equip item: https://polygonscan.com/tx/0x12059491e16ab4e46dd6fb47faeee28fbe89adb724a65f55f536a7da186edbd2
+5. TheShelf unequip item: https://polygonscan.com/tx/0x4fb06dc38b1431560c7c1d960fef4d39a405893d688b28918ae04a4de2862638

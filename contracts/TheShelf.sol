@@ -96,7 +96,7 @@ contract TheShelf is
 
     function mintItem(address itemAddress) external {
       // Mint TheItem
-      uint256 childId = TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
+      uint256 childId = TheItem(itemAddress).nestMint(msg.sender, address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
       uint256 childIndex = TheItem(itemAddress).pendingChildrenOf(ownerToShelfId[msg.sender]).length; 
 
       acceptChild(
@@ -141,15 +141,7 @@ contract TheShelf is
             ownerItemChildId[msg.sender][itemAddress] // childId
             ));
     }
-
-    /**
-     * @notice Used to mint the desired number of tokens to the specified address.
-     * @dev The `data` value of the `_safeMint` method is set to an empty value.
-     * @dev Can only be called while the open sale is open.
-     * @param to Address to which to mint the token
-     * @param numToMint Number of tokens to mint
-     * @return The ID of the first token to be minted in the current minting cycle
-     */
+    
     function mint() public payable virtual returns (uint256) {
         require(ownerToShelfId[msg.sender] == 0, 'Already minted');
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(

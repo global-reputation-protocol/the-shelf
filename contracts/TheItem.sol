@@ -5,6 +5,7 @@ pragma solidity ^0.8.21;
 import "@rmrk-team/evm-contracts/contracts/implementations/abstract/RMRKAbstractEquippable.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/utils/RMRKTokenURIEnumerated.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/lazyMintNative/InitDataNativePay.sol";
+import "./TheAllowList.sol";
 
 /**
  * @title EquipabbleToken
@@ -17,6 +18,7 @@ contract TheItem is
     RMRKAbstractEquippable
 {
     uint256 private _pricePerMint;
+    address allowListAddress;
 
     /**
      * @notice Used to initialize the smart contract.
@@ -31,7 +33,8 @@ contract TheItem is
         string memory symbol,
         string memory collectionMetadata,
         string memory baseTokenURI,
-        InitData memory data
+        InitData memory data, 
+        address allowListAddress_
     )
         RMRKTokenURIEnumerated(baseTokenURI)
         RMRKImplementationBase(
@@ -45,24 +48,17 @@ contract TheItem is
     {
         _pricePerMint = data.pricePerMint;
         transferOwnership(data.royaltyRecipient);
+        allowListAddress = allowListAddress_;
     }
 
-
-    /**
-     * @notice Used to mint a desired number of child tokens to a given parent token.
-     * @dev The `data` value of the `_safeMint` method is set to an empty value.
-     * @dev Can only be called while the open sale is open.
-     * @param to Address of the collection smart contract of the token into which to mint the child token
-     * @param numToMint Number of tokens to mint
-     * @param destinationId ID of the token into which to mint the new child token
-     * @return The ID of the first token to be minted in the current minting cycle
-     */
     function nestMint(
-        // address minter, // executes if called by orchestrator or minter == msg.sender
+        address sender,
         address to,
         uint256 numToMint,
         uint256 destinationId
     ) public payable virtual onlyOwner returns (uint256) {
+        require(TheAllowList(allowListAddress).isAllowed(sender), "TheItem: Not allowed");
+
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(
             numToMint
         );

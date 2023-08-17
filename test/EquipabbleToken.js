@@ -5,12 +5,6 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-// enum ItemType {
-//   None,
-//   Slot,
-//   Fixed,
-// }
-
 const MAX_UINT256 = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
 async function setupCatalog(){
@@ -31,8 +25,8 @@ async function setupCatalog(){
 function getShelfArgs(address){
   const name = "TheShelf";
     const symbol = "SHELF";
-    const collectionMetadata = "";
-    const baseTokenURI = "";
+    const collectionMetadata = "https://shelf-frontend-shelf.vercel.app/shelf-collection.json";
+    const baseTokenURI = "https://shelf-frontend-shelf.vercel.app/shelf.json";
     const data = [
       address, // address royaltyRecipient; // 20 bytes
       0, // uint16 royaltyPercentageBps; // 2 bytes
@@ -45,8 +39,8 @@ function getShelfArgs(address){
 function getItemArgs(shelfAddress, allowListAddress){
   const name = "TheItem";
     const symbol = "ITEM";
-    const collectionMetadata = "";
-    const baseTokenURI = "";
+    const collectionMetadata = "https://shelf-frontend-shelf.vercel.app/item-collection.json";
+    const baseTokenURI = "https://shelf-frontend-shelf.vercel.app/item.json";
     const data = [
       shelfAddress, // address royaltyRecipient; // 20 bytes
       0, // uint16 royaltyPercentageBps; // 2 bytes
@@ -186,12 +180,12 @@ describe("Equippable Token", function () {
     // });
 
     it("Quick", async function () {
-      const { shelf, item } = await loadFixture(deployOneYearLockFixture);
+      const { owner, shelf, item } = await loadFixture(deployOneYearLockFixture);
 
       await shelf.addItemCollection(
         item.target, // address itemAddress,
         [1], // uint64 slot,
-        "item.png", // address catalogAddress,
+        "https://shelf-frontend-shelf.vercel.app/item-on-shelf.png", // address catalogAddress,
       );
 
       await shelf.mint(); // Mint TheShelf
@@ -199,6 +193,8 @@ describe("Equippable Token", function () {
       await shelf.mintItem(item.target);
 
       await shelf.equipItem(item.target);
+
+      await shelf.unequipItem(item.target);
     });
   });
 });

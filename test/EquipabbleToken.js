@@ -42,18 +42,18 @@ function getShelfArgs(address){
     return [name, symbol, collectionMetadata, baseTokenURI, data];
 }
 
-function getItemArgs(address){
+function getItemArgs(shelfAddress, allowListAddress){
   const name = "TheItem";
     const symbol = "ITEM";
     const collectionMetadata = "";
     const baseTokenURI = "";
     const data = [
-      address, // address royaltyRecipient; // 20 bytes
+      shelfAddress, // address royaltyRecipient; // 20 bytes
       0, // uint16 royaltyPercentageBps; // 2 bytes
       MAX_UINT256, // uint256 maxSupply;
       0, // uint256 pricePerMint;
     ];
-    return [name, symbol, collectionMetadata, baseTokenURI, data];
+    return [name, symbol, collectionMetadata, baseTokenURI, data, allowListAddress];
 }
 
 describe("Equippable Token", function () {
@@ -69,18 +69,20 @@ describe("Equippable Token", function () {
 
     await shelf.waitForDeployment();
 
-    const item =  await ethers.deployContract("TheItem", getItemArgs(shelf.target));
+    const allowList = await ethers.deployContract("TheAllowList", [[owner.address]]);
+    await allowList.waitForDeployment();
+
+    const item =  await ethers.deployContract("TheItem", getItemArgs(shelf.target, allowList.target));
+    await item.waitForDeployment();
 
     const catalogSymbol = 'CATALOG';
     const catalogType = 'items';
     const catalog = await ethers.deployContract("TheCatalog", [catalogSymbol, catalogType]);
-
-    await item.waitForDeployment();
     await catalog.waitForDeployment();
 
     // setup catalog addPartList
 
-    return { catalog, shelf, item, owner, otherAccount };
+    return { catalog, shelf, item, owner, otherAccount, allowList };
   }
  
   // USER                   PROTOCOL

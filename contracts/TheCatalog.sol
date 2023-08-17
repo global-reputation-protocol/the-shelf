@@ -19,6 +19,8 @@ contract TheCatalog is OwnableLock, RMRKCatalog {
      * @param metadataURI Base metadata URI of the contract
      * @param type_ The type of the catalog
      */
+
+    uint64 private _totalParts;
     constructor(
         string memory metadataURI,
         string memory type_
@@ -43,9 +45,15 @@ contract TheCatalog is OwnableLock, RMRKCatalog {
      * @param intakeStruct `IntakeStruct` struct consisting of `partId` and a nested `Part` struct
      */
     function addPart(
-        IntakeStruct calldata intakeStruct
+        string memory metadataURI
     ) public virtual onlyOwnerOrContributor notLocked {
-        _addPart(intakeStruct);
+        _totalParts++;
+        _addPart(_totalParts, [
+                                1,  // ItemType itemType; //1 byte 
+                                10, // uint8 zindex 
+                                [owner], //address[] equippable
+                                metadataURI
+                                ]);
     }
 
     /**
@@ -120,5 +128,9 @@ contract TheCatalog is OwnableLock, RMRKCatalog {
         uint64 partId
     ) public virtual onlyOwnerOrContributor {
         _resetEquippableAddresses(partId);
+    }
+
+    function totalParts() public view returns (uint64) {
+        return _totalParts;
     }
 }

@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@rmrk-team/evm-contracts": "^2.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.1.1",
+    "hardhat": "^2.17.1"
+  }
+}

@@ -196,15 +196,7 @@ describe("Equippable Token", function () {
 
       await shelf.mintItem(item.target);
 
-      // shelf.equipItem(item.target);
-
-      await shelf.equip([
-        1, // shelfId, 
-        0, // childIndex,
-        1, // assetId
-        1, // slot
-        1 // childAssetId
-        ]);
+      await shelf.equipItem(item.target);
     });
   });
 });

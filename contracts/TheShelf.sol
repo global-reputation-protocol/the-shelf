@@ -22,7 +22,10 @@ contract TheShelf is
     address catalogAddress;
     uint64 private totalParts;
     mapping(address => uint256) public assetToItem;
+    mapping(address => uint64) public slotToItem;
     mapping(address => uint256) public ownerToShelfId;
+    mapping(address => mapping(address => uint64)) public ownerItemChildId;
+    mapping(address => mapping(address => uint256)) public ownerItemChildIndex;
 
     /**
      * @notice Used to initialize the smart contract.
@@ -83,6 +86,7 @@ contract TheShelf is
         );
 
         assetToItem[itemAddress] = TheItem(itemAddress).totalAssets();
+        slotToItem[itemAddress] = slots[0];
         TheItem(itemAddress).setValidParentForEquippableGroup(
             1, // equippableGroupId,
             address(this), // soldierEquip.address,
@@ -92,10 +96,19 @@ contract TheShelf is
 
     function mintItem(address itemAddress) external {
       // Mint TheItem
-      TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
+      uint256 childId = TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
+      uint256 childIndex = TheItem(itemAddress).pendingChildrenOf(ownerToShelfId[msg.sender]).length; 
 
-      acceptChild(1, 0, itemAddress, 1); // Accept Item on TheShelf
-    
+      acceptChild(
+        ownerToShelfId[msg.sender], // nftId
+        childIndex, 
+        itemAddress, 
+        childId
+        ); // Accept Item on TheShelf
+
+      ownerItemChildId[msg.sender][itemAddress] = uint64(childId);
+      ownerItemChildIndex[msg.sender][itemAddress] = childIndex; 
+ 
         // Gives Visual Asset to Token
       TheItem(itemAddress).addAssetToToken(
             ownerToShelfId[msg.sender], // uint256 tokenId,
@@ -117,6 +130,16 @@ contract TheShelf is
                                 parts, //address[] equippable
                                 metadataURI
                                 )));
+    }
+
+    function equipItem(address itemAddress) external {
+        equip(IntakeEquip(
+            ownerToShelfId[msg.sender], // shelfId, 
+            ownerItemChildIndex[msg.sender][itemAddress], // childIndex,
+            uint64(assetToItem[itemAddress]), // assetId
+            slotToItem[itemAddress], // slot
+            ownerItemChildId[msg.sender][itemAddress] // childId
+            ));
     }
 
     /**

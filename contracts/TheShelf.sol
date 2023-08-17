@@ -5,6 +5,8 @@ pragma solidity ^0.8.21;
 import "@rmrk-team/evm-contracts/contracts/implementations/abstract/RMRKAbstractEquippable.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/utils/RMRKTokenURIEnumerated.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/lazyMintNative/InitDataNativePay.sol";
+import "./TheCatalog.sol";
+
 // import "hardhat/console.sol";
 
 /**
@@ -18,6 +20,8 @@ contract TheShelf is
     RMRKAbstractEquippable
 {
     uint256 private _pricePerMint;
+    address catalogAddress;
+    uint64 private totalParts;
 
     /**
      * @notice Used to initialize the smart contract.
@@ -45,6 +49,22 @@ contract TheShelf is
         )
     {
         _pricePerMint = data.pricePerMint;
+        TheCatalog catalog = new TheCatalog('CATALOG', 'items');
+        catalogAddress = address(catalog);
+    }
+
+    function addPart(
+        string memory metadataURI
+    ) public {
+        totalParts++;
+        address[] memory parts;
+        parts[0] = address(this);
+        TheCatalog(catalogAddress).addPart(IRMRKCatalog.IntakeStruct(totalParts, IRMRKCatalog.Part(
+                                IRMRKCatalog.ItemType.Slot,  // ItemType itemType; //1 byte 
+                                10, // uint8 zindex 
+                                parts, //address[] equippable
+                                metadataURI
+                                )));
     }
 
     /**

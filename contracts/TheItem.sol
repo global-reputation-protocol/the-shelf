@@ -5,7 +5,7 @@ pragma solidity ^0.8.21;
 import "@rmrk-team/evm-contracts/contracts/implementations/abstract/RMRKAbstractEquippable.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/utils/RMRKTokenURIEnumerated.sol";
 import "@rmrk-team/evm-contracts/contracts/implementations/lazyMintNative/InitDataNativePay.sol";
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 /**
  * @title EquipabbleToken
@@ -45,6 +45,7 @@ contract TheItem is
         )
     {
         _pricePerMint = data.pricePerMint;
+        transferOwnership(data.royaltyRecipient);
     }
 
 
@@ -63,6 +64,7 @@ contract TheItem is
         uint256 numToMint,
         uint256 destinationId
     ) public payable virtual returns (uint256) {
+        console.log("nestMint", to, numToMint, destinationId);
         (uint256 nextToken, uint256 totalSupplyOffset) = _prepareMint(
             numToMint
         );

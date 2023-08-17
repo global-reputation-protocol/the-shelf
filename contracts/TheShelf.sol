@@ -9,7 +9,7 @@ import "./TheCatalog.sol";
 import "./TheItem.sol";
 
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 /**
  * @title EquipabbleToken
@@ -55,6 +55,18 @@ contract TheShelf is
         _pricePerMint = data.pricePerMint;
         TheCatalog catalog = new TheCatalog('CATALOG', 'items');
         catalogAddress = address(catalog);
+
+        uint64[] memory partIds = new uint64[](15);
+        for (uint64 i = 0; i < 15; i++) {
+            partIds[i] = i + 1;
+        }
+        
+        addEquippableAssetEntry(
+            0, // uint64 equippableGroupId,
+            catalogAddress, // address catalogAddress,
+            baseTokenURI, // string memory metadataURI,
+            partIds // uint64[] calldata partIds = array equals to len of the shelf
+          );
     }
 
     function addItemCollection(
@@ -62,7 +74,8 @@ contract TheShelf is
         uint64[] calldata slots, // always make it lenght 1
         string memory metadataURI
     ) external {
-        require(assetToItem[itemAddress] != 0, 'Item already added');
+        require(assetToItem[itemAddress] == 0, 'Item already added');
+
         addPart(metadataURI);
         TheItem(itemAddress).addEquippableAssetEntry(
             1, // uint64 equippableGroupId,
@@ -81,6 +94,8 @@ contract TheShelf is
 
     function mintItem(address itemAddress) external {
       // Mint TheItem
+      console.log('minting item', msg.sender, ownerToShelfId[msg.sender]);
+
       TheItem(itemAddress).nestMint(address(this), 1, ownerToShelfId[msg.sender]); // Mint TheItem
 
       acceptChild(1, 0, itemAddress, 1); // Accept Item on TheShelf
@@ -97,8 +112,8 @@ contract TheShelf is
         string memory metadataURI
     ) public {
         totalParts++;
-        address[] memory parts;
-        parts[0] = address(this);
+        address[] memory parts = new address[](1); // Initialize with a specific length of 1
+        parts[0] = address(this); // Assign the current contract's address
         TheCatalog(catalogAddress).addPart(IRMRKCatalog.IntakeStruct(totalParts, IRMRKCatalog.Part(
                                 IRMRKCatalog.ItemType.Slot,  // ItemType itemType; //1 byte 
                                 10, // uint8 zindex 
@@ -133,6 +148,7 @@ contract TheShelf is
         }
 
         ownerToShelfId[msg.sender] = nextToken;
+        console.log('minted', msg.sender, nextToken);
 
         return nextToken;
     }

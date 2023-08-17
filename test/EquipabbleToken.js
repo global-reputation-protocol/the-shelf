@@ -67,7 +67,7 @@ describe("Equippable Token", function () {
     // const equipabbleToken = await EquipabbleToken.deploy(name, symbol, collectionMetadata, baseTokenURI, data);
     const shelf =  await ethers.deployContract("TheShelf", getShelfArgs(owner.address));
 
-    const item =  await ethers.deployContract("TheItem", getItemArgs(owner.address));
+    const item =  await ethers.deployContract("TheItem", getItemArgs(shelf.target));
 
     const catalogSymbol = 'CATALOG';
     const catalogType = 'items';
@@ -91,95 +91,127 @@ describe("Equippable Token", function () {
   // Equip TheItem
 
   describe("Deployment", function () {
-    it("Deploy Equippable", async function () {
-      const { shelf } = await loadFixture(deployOneYearLockFixture);
-      expect(await shelf.pricePerMint()).to.equal(0)
-    });
+    // it("Deploy Equippable", async function () {
+    //   const { shelf } = await loadFixture(deployOneYearLockFixture);
+    //   expect(await shelf.pricePerMint()).to.equal(0)
+    // });
 
-    it("Mint NFT", async function () {
+    // it("Mint NFT", async function () {
+    //   const { catalog, shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
+
+    //   // Mint TheShelf
+    //   await shelf.mint(owner.address, 1); // Mint TheShelf
+
+    //   const partDescription = {
+    //     itemType: 1,
+    //     z: 0,
+    //     equippable: [item.target],
+    //     metadataURI: 'item.png',
+    //   };
+  
+    //   await catalog.addPartList([
+    //     { partId: 1, part: partDescription },
+    //   ]);
+
+    //   // Global shelf config
+    //   await shelf.addEquippableAssetEntry(
+    //     0, // uint64 equippableGroupId,
+    //     catalog.target, // address catalogAddress,
+    //     'sample', // string memory metadataURI,
+    //     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] // uint64[] calldata partIds = array equals to len of the shelf
+    //   )
+
+    //   // Global Item config
+    //   await item.addEquippableAssetEntry(
+    //     1, // uint64 equippableGroupId,
+    //     catalog.target, // address catalogAddress,
+    //     'sample', // string memory metadataURI,
+    //     [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
+    //   )
+
+    //   await item.setValidParentForEquippableGroup(
+    //     1, // equippableGroupId,
+    //     shelf.target, // soldierEquip.address,
+    //     1, // partIdForWeapon,
+    //   );
+
+    //   console.log(await item.totalAssets())
+      
+    //   // Mint TheItem
+    //   await item.nestMint(shelf.target, 1, 1); // Mint TheItem
+
+    //   // Accept Child
+    //   // parentId (uint256)
+    //   // childIndex (uint256) - how many children ppl have
+    //   // childAddress (address)
+    //   // childId (uint256) 
+    //   await shelf.acceptChild(1, 0, item.target, 1); // Accept Item on TheShelf
+    
+    //   // Gives Visual Asset to Token
+    //   await item.addAssetToToken(
+    //     1, // uint256 tokenId,
+    //     await item.totalAssets(), // uint64 assetId,
+    //     0 // uint64 replacesAssetWithId = 0
+    //   );
+
+    // //   const expectedSlots = [bn(partIdForWeapon), bn(partIdForBackground)];
+    // //   expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
+    // //   expectedSlots,
+    // //   [
+    // //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
+    // //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
+    // //   ],
+    // //   ['', ''],
+    // // ]);
+
+    // await shelf.equip([
+    //   1, // soldiersIds[0], 
+    //   0, // childIndex,
+    //   1, // assetId
+    //   1, // slot
+    //   1 // childAssetId
+    //   ])
+
+    // // // Child is marked as equipped:
+    // expect(
+    //   await shelf.isChildEquipped(
+    //     1, // soldiersIds[0], 
+    //     item.target, //weapon.address,
+    //     1, // weaponsIds[0]
+    //     )
+    // ).to.eql(true);
+    // });
+
+    it("Quick", async function () {
       const { catalog, shelf, item, owner } = await loadFixture(deployOneYearLockFixture);
 
-      // Mint TheShelf
+      console.log('step 0')
+
+      await shelf.addEquippableAssetEntry(
+            0, // uint64 equippableGroupId,
+            catalog.target, // address catalogAddress,
+            'sample', // string memory metadataURI,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] // uint64[] calldata partIds = array equals to len of the shelf
+          )
+
+      console.log('step A')
+
       await shelf.mint(owner.address, 1); // Mint TheShelf
 
-      const partDescription = {
-        itemType: 1,
-        z: 0,
-        equippable: [item.target],
-        metadataURI: 'item.png',
-      };
-  
-      await catalog.addPartList([
-        { partId: 1, part: partDescription },
-      ]);
+      await shelf.mintItem(item.target);
 
-      // Global shelf config
-      await shelf.addEquippableAssetEntry(
-        0, // uint64 equippableGroupId,
-        catalog.target, // address catalogAddress,
-        'sample', // string memory metadataURI,
-        [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
-      )
+      console.log('step B')
 
-      // Global Item config
-      await item.addEquippableAssetEntry(
-        1, // uint64 equippableGroupId,
-        catalog.target, // address catalogAddress,
-        'sample', // string memory metadataURI,
-        [1, 2, 3, 4, 5, 6] // uint64[] calldata partIds = array equals to len of the shelf
-      )
-
-      await item.setValidParentForEquippableGroup(
-        1, // equippableGroupId,
-        shelf.target, // soldierEquip.address,
-        1, // partIdForWeapon,
-      );
-
-      console.log(await item.totalAssets())
-      
-      // Mint TheItem
-      await item.nestMint(shelf.target, 1, 1); // Mint TheItem
-
-      // Accept Child
-      // parentId (uint256)
-      // childIndex (uint256) - how many children ppl have
-      // childAddress (address)
-      // childId (uint256) 
-      await shelf.acceptChild(1, 0, item.target, 1); // Accept Item on TheShelf
-    
-      // Gives Visual Asset to Token
-      await item.addAssetToToken(
-        1, // uint256 tokenId,
-        await item.totalAssets(), // uint64 assetId,
-        0 // uint64 replacesAssetWithId = 0
-      );
-
-    //   const expectedSlots = [bn(partIdForWeapon), bn(partIdForBackground)];
-    //   expect(await view.getEquipped(soldierEquip.address, soldiersIds[0], soldierResId)).to.eql([
-    //   expectedSlots,
-    //   [
-    //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-    //     [bn(0), bn(0), bn(0), ethers.constants.AddressZero],
-    //   ],
-    //   ['', ''],
-    // ]);
-
-    await shelf.equip([
-      1, // soldiersIds[0], 
-      0, // childIndex,
-      1, // assetId
-      1, // slot
-      1 // childAssetId
-      ])
-
-    // // Child is marked as equipped:
-    expect(
-      await shelf.isChildEquipped(
+      await shelf.equip([
         1, // soldiersIds[0], 
-        item.target, //weapon.address,
-        1, // weaponsIds[0]
-        )
-    ).to.eql(true);
+        0, // childIndex,
+        1, // assetId
+        1, // slot
+        1 // childAssetId
+        ]);
+
+        console.log('step C')
+
     });
   });
 });

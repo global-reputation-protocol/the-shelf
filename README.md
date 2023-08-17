@@ -38,8 +38,8 @@ NFT 2.0 reputational avatars for governance and other utilities
 
 ## Deployed Contracts
 
-1. TheShelf: https://polygonscan.com/address/0x6991b7d7f62b1fFD45D964216e914150CaFF6195
-2. AAVE-SNAPSHOT-0: https://polygonscan.com/address/0x99D89F30d5CeA9Ca477BF8E8dDfA9f83fD6Ca52E
+1. TheShelf: https://polygonscan.com/address/0x36B4f598528209CaCf7fdD63c0A16AaF9DB187ed
+2. AAVE-SNAPSHOT-0: https://polygonscan.com/address/0x5FE2DFBc079F02B3541Ad9191183df6ab3EF4001
 
 ## Actions
 1. TheShelf mint: https://polygonscan.com/tx/0x863007cfb54cb432684ef81e5ac6fa4115b30cc613f2460148579c093e697b9e
